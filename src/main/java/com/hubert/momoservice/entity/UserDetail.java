@@ -176,5 +176,4 @@ public class UserDetail extends Auditable implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
-
 }

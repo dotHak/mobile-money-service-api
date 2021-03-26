@@ -30,13 +30,29 @@ public class User extends Auditable implements Serializable {
     )
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.DETACH,
+                    CascadeType.MERGE,
+                    CascadeType.REFRESH
+            }
+    )
     @JoinTable(
             name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_phone_numbers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "phone_number_id")
+    )
+    private Set<PhoneNumber> phoneNumbers = new HashSet<>();
+
 
     public User(String email, String password) {
         this.email = email;
@@ -79,12 +95,14 @@ public class User extends Auditable implements Serializable {
         this.roles = roles;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public Set<PhoneNumber> getPhoneNumbers() {
+        return phoneNumbers;
     }
+
+    public void setPhoneNumbers(Set<PhoneNumber> phoneNumbers) {
+        this.phoneNumbers = phoneNumbers;
+    }
+
+
+
 }

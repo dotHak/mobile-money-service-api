@@ -1,10 +1,13 @@
 package com.hubert.momoservice.entity;
 
+import com.hubert.momoservice.config.auditing.Auditable;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "fingerprints")
-public class Fingerprint {
+public class Fingerprint extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

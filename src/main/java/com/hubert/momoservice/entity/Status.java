@@ -3,9 +3,8 @@ package com.hubert.momoservice.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "roles")
-public class Role {
-
+@Table(name = "statuses")
+public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
@@ -18,11 +17,11 @@ public class Role {
     )
     private String name;
 
-    public Role(String name) {
-        this.name = name;
+    public Status() {
     }
 
-    public Role() {
+    public Status(String name) {
+        this.name = name;
     }
 
     public int getId() {
