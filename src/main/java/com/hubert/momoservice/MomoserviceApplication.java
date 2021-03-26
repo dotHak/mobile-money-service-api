@@ -151,6 +151,11 @@ public class MomoserviceApplication {
 			deviceRepository.saveAll(List.of(device1, device2, device3));
 			tokenRepository.saveAll(List.of(token1, token2, token3));
 			transactionRepository.saveAll(List.of(transaction1, transaction2, transaction3, transaction4));
+
+			var list = legalDocumentRepository.findAllByMerchant_Id(1L);
+			if(list.size() > 0){
+				list.forEach(System.out::println);
+			}
 		};
 	}
 }

@@ -23,11 +23,11 @@ public class Device  extends Auditable implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "user_id",
+            name = "merchant_id",
             nullable = false,
             referencedColumnName = "id"
     )
-    private Merchant user;
+    private Merchant merchant;
 
 
     public Device() {
@@ -37,9 +37,9 @@ public class Device  extends Auditable implements Serializable {
         this.name = name;
     }
 
-    public Device(String name, Merchant user) {
+    public Device(String name, Merchant merchant) {
         this.name = name;
-        this.user = user;
+        this.merchant = merchant;
     }
 
     public long getId() {
@@ -58,11 +58,11 @@ public class Device  extends Auditable implements Serializable {
         this.name = name;
     }
 
-    public Merchant getUser() {
-        return user;
+    public Merchant getMerchant() {
+        return merchant;
     }
 
-    public void setUser(Merchant user) {
-        this.user = user;
+    public void setMerchant(Merchant merchant) {
+        this.merchant = merchant;
     }
 }
