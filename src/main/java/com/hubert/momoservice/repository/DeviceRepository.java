@@ -9,8 +9,5 @@ import java.util.List;
 
 @Repository
 public interface DeviceRepository extends JpaRepository<Device, Long> {
-
-    public List<Device> findAllByMerchant_Id(Long id);
-
     public List<Device> findAllByMerchant(Merchant merchant);
 }

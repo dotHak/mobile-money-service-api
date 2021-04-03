@@ -3,6 +3,8 @@ package com.hubert.momoservice.entity;
 import com.hubert.momoservice.config.auditing.Auditable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -11,23 +13,24 @@ public class PhoneNumber  extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "phone_id", updatable = false)
     private long id;
 
-    @Column(
-            nullable = false,
-            unique = true,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty
+    @NotNull
     private String number;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private boolean isDefault = false;
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(
             name = "network_id",
             nullable = false,
-            referencedColumnName = "id"
+            referencedColumnName = "network_id"
     )
     private Network network;
+
+
 
     public PhoneNumber() {
     }
@@ -35,6 +38,14 @@ public class PhoneNumber  extends Auditable implements Serializable {
     public PhoneNumber(String number, Network network) {
         this.number = number;
         this.network = network;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getNumber() {
@@ -53,4 +64,11 @@ public class PhoneNumber  extends Auditable implements Serializable {
         this.network = network;
     }
 
+    public boolean getDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
+    }
 }

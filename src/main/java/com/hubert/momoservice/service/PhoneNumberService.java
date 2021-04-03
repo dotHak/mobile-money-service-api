@@ -1,5 +1,7 @@
 package com.hubert.momoservice.service;
 
+import com.hubert.momoservice.config.exception.NotFoundException;
+import com.hubert.momoservice.entity.Network;
 import com.hubert.momoservice.entity.PhoneNumber;
 import com.hubert.momoservice.repository.PhoneNumberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +34,33 @@ public class PhoneNumberService implements GenericService<PhoneNumber, Long> {
     public PhoneNumber save(PhoneNumber phoneNumber) {
         return repository.save(phoneNumber);
     }
+
+    public void saveAll(Iterable<PhoneNumber> phoneNumbers){
+        repository.saveAll(phoneNumbers);
+    }
+
+    public PhoneNumber update(PhoneNumber phoneNumber, Long id){
+        return repository.findById(id).map(oldNumber -> {
+            String number = phoneNumber.getNumber() == null ?
+                    oldNumber.getNumber() : phoneNumber.getNumber();
+
+            boolean isDefault = phoneNumber.getDefault() == oldNumber.getDefault() ?
+                    oldNumber.getDefault() : phoneNumber.getDefault();
+
+            Network network = phoneNumber.getNetwork() == null ?
+                    oldNumber.getNetwork() : phoneNumber.getNetwork();
+
+            oldNumber.setNumber(number);
+            oldNumber.setDefault(isDefault);
+            oldNumber.setNetwork(network);
+
+            return repository.save(oldNumber);
+        }).orElseThrow(() -> new NotFoundException("Phone number not found for id: " + id));
+
+    }
+
+    public Optional<PhoneNumber> getPhoneNumberByNumber(String number){
+        return repository.findPhoneNumberByNumber(number);
+    }
+
 }

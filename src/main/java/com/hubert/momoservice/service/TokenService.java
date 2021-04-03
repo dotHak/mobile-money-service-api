@@ -1,5 +1,6 @@
 package com.hubert.momoservice.service;
 
+import com.hubert.momoservice.entity.AppUser;
 import com.hubert.momoservice.entity.Token;
 import com.hubert.momoservice.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +33,10 @@ public class TokenService  implements GenericService<Token, Long> {
     public Token save(Token token) {
         return repository.save(token);
     }
+
+    public List<Token> getTokensByUser(AppUser appUser){
+
+        return repository.findAllByAppUser(appUser);
+    }
+
 }

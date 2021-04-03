@@ -1,8 +1,12 @@
 package com.hubert.momoservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hubert.momoservice.config.auditing.Auditable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity()
@@ -11,58 +15,32 @@ public class UserDetail extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "detail_id")
     private long id;
 
-    @Column(
-            name = "first_name",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String firstName;
-    @Column(
-            name = "last_name",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String lastName;
-    @Column(
-            name = "middle_name",
-            columnDefinition = "TEXT"
-    )
+
     private String middleName;
-    @Column(
-            name = "house_number",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String houseNumber;
-    @Column(
-            name = "region",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String region;
-    @Column(
-            name = "city",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String city;
-    @Column(
-            name = "town",
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String town;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(
             name = "user_id",
             nullable = false,
-            referencedColumnName = "id"
+            referencedColumnName = "user_id"
     )
-    private User user;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private AppUser appUser;
 
     public UserDetail() {
     }
@@ -93,7 +71,7 @@ public class UserDetail extends Auditable implements Serializable {
             String region,
             String city,
             String town,
-            User user
+            AppUser appUser
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -102,7 +80,7 @@ public class UserDetail extends Auditable implements Serializable {
         this.region = region;
         this.city = city;
         this.town = town;
-        this.user = user;
+        this.appUser = appUser;
     }
 
     public long getId() {
@@ -169,11 +147,12 @@ public class UserDetail extends Auditable implements Serializable {
         this.town = town;
     }
 
-    public User getUser() {
-        return user;
+    @JsonIgnore
+    public AppUser getUser() {
+        return appUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 }

@@ -1,5 +1,7 @@
 package com.hubert.momoservice.service;
 
+import com.hubert.momoservice.config.exception.NotFoundException;
+import com.hubert.momoservice.entity.AppUser;
 import com.hubert.momoservice.entity.Fingerprint;
 import com.hubert.momoservice.repository.FingerprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +33,18 @@ public class FingerprintService implements GenericService<Fingerprint, Long> {
     @Override
     public Fingerprint save(Fingerprint fingerprint) {
         return repository.save(fingerprint);
+    }
+
+    public Optional<Fingerprint> getFingerprintByUser(AppUser appUser){
+
+        return  repository.findFingerprintByAppUser(appUser);
+    }
+
+    public Fingerprint update(Fingerprint fingerprint, Long id){
+
+        return repository.findById(id).map(oldfinger -> {
+            oldfinger.setImageUrl(fingerprint.getImageUrl());
+            return repository.save(oldfinger);
+        }).orElseThrow(() -> new NotFoundException("No fingerprint found for id: " + id));
     }
 }

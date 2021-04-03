@@ -4,39 +4,40 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "statuses")
-public class Status {
+public class Status{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
-    private int id;
+    @Column(name = "status_id")
+    private short id;
 
-    @Column(
-            nullable = false,
-            unique = true,
-            columnDefinition = "TEXT"
-    )
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private StatusType name;
 
     public Status() {
     }
 
-    public Status(String name) {
+    public Status(StatusType name) {
         this.name = name;
     }
 
-    public int getId() {
+    public Status(short id, StatusType name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public short getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(short id) {
         this.id = id;
     }
 
-    public String getName() {
+    public StatusType getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(StatusType name) {
         this.name = name;
     }
 }

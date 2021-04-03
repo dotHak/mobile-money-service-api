@@ -3,6 +3,7 @@ package com.hubert.momoservice.entity;
 import com.hubert.momoservice.config.auditing.Auditable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -11,32 +12,34 @@ public class Transaction extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "transaction_id", updatable = false)
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(
             name = "sender_id",
-            referencedColumnName = "id",
+            referencedColumnName = "phone_id",
             nullable = false
     )
+    @NotNull
     private PhoneNumber sender;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(
             name = "receiver_id",
-            referencedColumnName = "id",
+            referencedColumnName = "phone_id",
             nullable = false
     )
+    @NotNull
     private PhoneNumber receiver;
 
-    @Column(nullable = false)
+    @NotNull
     private double price;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(
             name = "status_id",
-            referencedColumnName = "id",
+            referencedColumnName = "status_id",
             nullable = false
     )
     private Status status;

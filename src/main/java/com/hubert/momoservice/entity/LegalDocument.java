@@ -1,8 +1,12 @@
 package com.hubert.momoservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hubert.momoservice.config.auditing.Auditable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -10,22 +14,20 @@ import java.io.Serializable;
 public class LegalDocument extends Auditable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "document_id")
     private long id;
 
-    @Column(
-            nullable = false,
-            unique = true,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty
+    @NotNull
     private String documentUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
             name = "merchant_id",
-            referencedColumnName = "id",
+            referencedColumnName = "merchant_id",
             nullable = false
     )
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Merchant merchant;
 
     public LegalDocument() {
@@ -51,6 +53,7 @@ public class LegalDocument extends Auditable implements Serializable {
         this.documentUrl = documentUrl;
     }
 
+    @JsonIgnore
     public Merchant getMerchant() {
         return merchant;
     }

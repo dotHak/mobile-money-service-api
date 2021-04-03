@@ -1,5 +1,7 @@
 package com.hubert.momoservice.service;
 
+import com.hubert.momoservice.config.exception.NotFoundException;
+import com.hubert.momoservice.entity.AppUser;
 import com.hubert.momoservice.entity.UserDetail;
 import com.hubert.momoservice.repository.UserDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +34,42 @@ public class UserDetailService implements GenericService<UserDetail, Long>{
     public UserDetail save(UserDetail userDetail) {
         return repository.save(userDetail);
     }
+
+    public Optional<UserDetail> getUserDetailByUser(AppUser appUser){
+        return repository.findUserDetailByAppUser(appUser);
+    }
+
+    public UserDetail update(UserDetail userDetail, Long id){
+
+        return repository.findById(id)
+                .map( oldDetail -> {
+                    String firstName = userDetail.getFirstName() == null ?
+                            oldDetail.getFirstName() : userDetail.getFirstName();
+                    String lastName = userDetail.getLastName() == null ?
+                            oldDetail.getLastName() : userDetail.getLastName();
+                    String middleName = userDetail.getMiddleName() == null ?
+                            oldDetail.getMiddleName() : userDetail.getMiddleName();
+                    String houseNumber = userDetail.getHouseNumber() == null ?
+                            oldDetail.getHouseNumber() : userDetail.getHouseNumber();
+                    String city = userDetail.getCity() == null ?
+                            oldDetail.getCity() : userDetail.getCity();
+                    String region = userDetail.getRegion() == null ?
+                            oldDetail.getRegion() : userDetail.getRegion();
+                    String town = userDetail.getTown() == null ?
+                            oldDetail.getTown() : userDetail.getTown();
+
+                    oldDetail.setFirstName(firstName);
+                    oldDetail.setLastName(lastName);
+                    oldDetail.setMiddleName(middleName);
+                    oldDetail.setHouseNumber(houseNumber);
+                    oldDetail.setCity(city);
+                    oldDetail.setRegion(region);
+                    oldDetail.setTown(town);
+
+                    return repository.save(oldDetail);
+                })
+                .orElseThrow(() -> new NotFoundException("No user details found for id: " + id));
+
+    }
+
 }

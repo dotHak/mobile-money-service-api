@@ -1,8 +1,12 @@
 package com.hubert.momoservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hubert.momoservice.config.auditing.Auditable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -11,23 +15,21 @@ public class Fingerprint extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "fingerprint_id")
     private long id;
 
-    @Column(
-            nullable = false,
-            unique = true,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty
+    @NotNull
     private String imageUrl;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(
             name = "user_id",
             nullable = false,
-            referencedColumnName = "id"
+            referencedColumnName = "user_id"
     )
-    private User user;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private AppUser appUser;
 
     public Fingerprint() {
     }
@@ -36,9 +38,9 @@ public class Fingerprint extends Auditable implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public Fingerprint(String imageUrl, User user) {
+    public Fingerprint(String imageUrl, AppUser appUser) {
         this.imageUrl = imageUrl;
-        this.user = user;
+        this.appUser = appUser;
     }
 
     public long getId() {
@@ -57,11 +59,12 @@ public class Fingerprint extends Auditable implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public User getUser() {
-        return user;
+    @JsonIgnore
+    public AppUser getUser() {
+        return appUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 }

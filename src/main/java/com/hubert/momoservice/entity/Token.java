@@ -1,30 +1,34 @@
 package com.hubert.momoservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "tokens")
-public class Token {
+public class Token implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "token_id")
     private long id;
 
-    @Column(
-            nullable = false,
-            unique = true,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty
+    @NotNull
     private String apiToken;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(
             name = "user_id",
             nullable = false,
-            referencedColumnName = "id"
+            referencedColumnName = "user_id"
     )
-    private User user;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private AppUser appUser;
 
     public Token() {
     }
@@ -33,9 +37,9 @@ public class Token {
         this.apiToken = apiToken;
     }
 
-    public Token(String apiToken, User user) {
+    public Token(String apiToken, AppUser appUser) {
         this.apiToken = apiToken;
-        this.user = user;
+        this.appUser = appUser;
     }
 
     public long getId() {
@@ -54,11 +58,12 @@ public class Token {
         this.apiToken = apiToken;
     }
 
-    public User getUser() {
-        return user;
+    @JsonIgnore
+    public AppUser getUser() {
+        return appUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 }

@@ -1,52 +1,35 @@
 package com.hubert.momoservice.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hubert.momoservice.config.auditing.Auditable;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "mechants")
+@Table(name = "merchants")
 public class Merchant extends Auditable implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "merchant_id")
     private long id;
-
-    @Column(
-            nullable = false,
-            unique = true,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String name;
-
-    @Column(
-            nullable = false,
-            unique = true,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull @Email
     private String email;
-
-    @Column(
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String address;
-
-    @Column(
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String region;
-
-    @Column(
-            nullable = false,
-            columnDefinition = "TEXT"
-    )
+    @NotEmpty @NotNull
     private String city;
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -55,15 +38,16 @@ public class Merchant extends Auditable implements Serializable {
             joinColumns = @JoinColumn(name = "merchant_id"),
             inverseJoinColumns = @JoinColumn(name = "phone_number_id")
     )
-    private Set<PhoneNumber> phoneNumbers = new HashSet<>() ;
+    private List<PhoneNumber> phoneNumbers = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(
             name = "user_id",
             nullable = false,
-            referencedColumnName = "id"
+            referencedColumnName = "user_id"
     )
-    private User user;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private AppUser appUser;
 
     public Merchant() {
     }
@@ -74,14 +58,14 @@ public class Merchant extends Auditable implements Serializable {
             String address,
             String region,
             String city,
-            User user
+            AppUser appUser
     ) {
         this.name = name;
         this.email = email;
         this.address = address;
         this.region = region;
         this.city = city;
-        this.user = user;
+        this.appUser = appUser;
     }
 
 
@@ -133,19 +117,40 @@ public class Merchant extends Auditable implements Serializable {
         this.city = city;
     }
 
-    public Set<PhoneNumber> getPhoneNumbers() {
+    public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(Set<PhoneNumber> phoneNumbers) {
+    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
 
-    public User getUser() {
-        return user;
+    @JsonIgnore
+    public AppUser getUser() {
+        return appUser;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(AppUser appUser) {
+        this.appUser = appUser;
+    }
+
+    public PhoneNumber getDefaultPhoneNumber(){
+        if(phoneNumbers.size() == 1){
+            return phoneNumbers.get(0);
+        }else {
+            for (PhoneNumber number: phoneNumbers){
+                if (number.getDefault()){
+                    return number;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void makeDefaultPhoneNumber(PhoneNumber phoneNumber){
+        phoneNumbers.forEach(phoneNumber1 -> {
+            phoneNumber1.setDefault(phoneNumber1.getNumber().equals(phoneNumber.getNumber()));
+        });
     }
 }
