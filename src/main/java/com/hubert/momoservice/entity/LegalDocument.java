@@ -37,6 +37,11 @@ public class LegalDocument extends Auditable implements Serializable {
         this.documentUrl = documentUrl;
     }
 
+    public LegalDocument(@NotEmpty @NotNull String documentUrl, Merchant merchant) {
+        this.documentUrl = documentUrl;
+        this.merchant = merchant;
+    }
+
     public long getId() {
         return id;
     }

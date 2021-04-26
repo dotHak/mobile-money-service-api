@@ -2,7 +2,6 @@ package com.hubert.momoservice.service;
 
 import com.hubert.momoservice.entity.AppUser;
 import com.hubert.momoservice.repository.AppUserRepository;
-import com.hubert.momoservice.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +13,9 @@ public class UserService implements GenericService<AppUser, Long>{
 
     private final AppUserRepository appUserRepository;
 
-    private final RoleRepository roleRepository;
-
     @Autowired
-    public UserService(AppUserRepository appUserRepository, RoleRepository roleRepository) {
+    public UserService(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
-        this.roleRepository = roleRepository;
     }
 
     @Override

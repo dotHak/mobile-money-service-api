@@ -1,23 +1,32 @@
 package com.hubert.momoservice.service;
 
+import com.hubert.momoservice.config.aws.FileStore;
 import com.hubert.momoservice.config.exception.NotFoundException;
 import com.hubert.momoservice.entity.AppUser;
 import com.hubert.momoservice.entity.Fingerprint;
 import com.hubert.momoservice.repository.FingerprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class FingerprintService implements GenericService<Fingerprint, Long> {
 
+    private static final String FOLDER_NAME = "fingerprints";
+
     private final FingerprintRepository repository;
 
+    private final FileStore fileStore;
+
     @Autowired
-    public FingerprintService(FingerprintRepository repository) {
+    public FingerprintService(FingerprintRepository repository, FileStore fileStore) {
         this.repository = repository;
+        this.fileStore = fileStore;
     }
 
     @Override
@@ -42,9 +51,34 @@ public class FingerprintService implements GenericService<Fingerprint, Long> {
 
     public Fingerprint update(Fingerprint fingerprint, Long id){
 
-        return repository.findById(id).map(oldfinger -> {
-            oldfinger.setImageUrl(fingerprint.getImageUrl());
-            return repository.save(oldfinger);
+        return repository.findById(id).map(oldFingerprint -> {
+            oldFingerprint.setImageUrl(fingerprint.getImageUrl());
+            return repository.save(oldFingerprint);
         }).orElseThrow(() -> new NotFoundException("No fingerprint found for id: " + id));
+    }
+
+    public Fingerprint updateUrl(String url, Long id){
+        return repository.findById(id).map(oldFingerprint -> {
+            deleteFile(oldFingerprint.getImageUrl());
+            oldFingerprint.setImageUrl(url);
+            return repository.save(oldFingerprint);
+        }).orElseThrow(() -> new NotFoundException("No fingerprint found for id: " + id));
+    }
+
+
+    public String uploadFile(MultipartFile multipartFile){
+        return fileStore.uploadFile(multipartFile, FOLDER_NAME);
+    }
+
+    public byte[] getFile(Fingerprint fingerprint) {
+        return fileStore.download(fingerprint.getImageUrl(), FOLDER_NAME);
+    }
+    @Async
+    public void deleteFile(String fileUrl){
+        fileStore.deleteFile(fileUrl,FOLDER_NAME);
+    }
+
+    public File convertToFile(MultipartFile multipartFile){
+        return fileStore.convertMultiPartFileToFile(multipartFile);
     }
 }

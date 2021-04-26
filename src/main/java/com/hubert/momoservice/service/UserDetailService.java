@@ -72,4 +72,29 @@ public class UserDetailService implements GenericService<UserDetail, Long>{
 
     }
 
+    public List<UserDetail> findAllByTown(UserDetail userDetail){
+        return repository.findAllByTownAndRegion(userDetail.getTown(), userDetail.getRegion());
+    }
+
+    public List<UserDetail> findAllByCity(UserDetail userDetail){
+        return repository.findAllByCityAndRegionAndTownIsNot(
+                userDetail.getCity(),
+                userDetail.getRegion(),
+                userDetail.getTown()
+        );
+    }
+
+    public List<UserDetail> findAllByRegion(UserDetail userDetail){
+        return repository.findAllByRegionAndTownIsNotAndCityIsNot(
+                userDetail.getRegion(),
+                userDetail.getTown(),
+                userDetail.getCity()
+        );
+    }
+
+    public List<UserDetail> findAllExceptRegion(UserDetail userDetail){
+        return repository.findAllByRegionIsNot(userDetail.getRegion());
+    }
+
+
 }
