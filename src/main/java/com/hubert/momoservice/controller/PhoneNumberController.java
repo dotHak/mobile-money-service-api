@@ -142,7 +142,7 @@ public class PhoneNumberController {
         return temp;
     }
 
-    @PutMapping("/{id}/user")
+    @PutMapping("/user/{id}")
     public PhoneNumber updateUserPhoneNumber(
                     @RequestBody PhoneNumber phoneNumber,
                     @PathVariable Long id, Principal principal
