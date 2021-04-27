@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.Principal;
@@ -43,121 +44,132 @@ public class FingerprintController {
     }
 
     @GetMapping
-    public Fingerprint getFingerprints(Principal principal){
+    public Fingerprint getFingerprints(Principal principal) {
         var user = userService.findUserEmail(principal.getName());
 
-        if(user.isPresent()){
-            var finger =  fingerprintService.getFingerprintByUser(user.get());
+        if (user.isPresent()) {
+            var detail = userDetailService.getUserDetailByUser(user.get());
+            if(detail.isEmpty()){
+                throw new NotFoundException("User details not found for the logged in user.");
+            }
+            var finger = detail.get().getFingerprint();
 
-            if (finger.isPresent())
-                return finger.get();
+            if (finger != null)
+                return finger;
             else
                 throw new NotFoundException("No fingerprint found");
-        }else {
+        } else {
             throw new NotFoundException("No user found");
         }
     }
 
     @PostMapping
     public Fingerprint addNewFingerprint(
-            @RequestPart(value= "file") final MultipartFile multipartFile,
+            @RequestPart(value = "file") final MultipartFile multipartFile,
             Principal principal) {
         var user = userService.findUserEmail(principal.getName());
 
-        if(user.isPresent()){
-            var finger =  fingerprintService.getFingerprintByUser(user.get());
-            finger.ifPresent(fingerprint -> {
+        if (user.isPresent()) {
+            var detail = userDetailService.getUserDetailByUser(user.get());
+            if(detail.isEmpty()){
+                throw new NotFoundException("User details not found for the logged in user.");
+            }
+
+            var finger = detail.get().getFingerprint();
+            if(finger != null){
                 throw new BadRequestException("Fingerprint already exists");
-            });
+            };
 
+            var userDetails = userDetailService.getUserDetailByUser(user.get());
+            if (userDetails.isEmpty()) {
+                throw new NotFoundException("User details not found for the logged in user.");
+            }
+
+            byte[] bytes = fingerprintService.getByteData(multipartFile);
             String url = fingerprintService.uploadFile(multipartFile);
-            Fingerprint fingerprint = new Fingerprint(url, user.get());
+            Fingerprint fingerprint = new Fingerprint(url, bytes, userDetails.get());
 
-            try{
+            try {
                 return fingerprintService.save(fingerprint);
-            }catch (DataIntegrityViolationException e){
+            } catch (DataIntegrityViolationException e) {
                 throw new BadRequestException(
                         e.getCause().getMessage() + ", (url) = (" + fingerprint.getImageUrl() + ") already exists");
             }
-        }else {
+        } else {
             throw new NotFoundException("No user found");
         }
     }
 
 
     @GetMapping("/{id}")
-    public Fingerprint getOne(@PathVariable Long id){
+    public Fingerprint getOne(@PathVariable Long id) {
         return fingerprintService
                 .getOne(id)
-                .orElseThrow( () -> new NotFoundException("Fingerprint not found for id: " + id));
+                .orElseThrow(() -> new NotFoundException("Fingerprint not found for id: " + id));
     }
 
     @PutMapping("/{id}")
     public Fingerprint updateFingerprint(
-            @RequestPart(value= "file") final MultipartFile multipartFile,
-             @PathVariable Long id){
+            @RequestPart(value = "file") final MultipartFile multipartFile,
+            @PathVariable Long id) {
         String url = fingerprintService.uploadFile(multipartFile);
-        return fingerprintService.updateUrl(url, id);
+        return fingerprintService.updateUrl(url, id, multipartFile);
     }
 
     @PostMapping("/authenticate")
     public Boolean authenticateFingerprint(
-            @RequestPart(value= "file") final MultipartFile multipartFile,
+            @RequestPart(value = "file") final MultipartFile multipartFile,
             Principal principal,
             @RequestParam(value = "price") double price
-    ){
+    ) {
         var user = userService.findUserEmail(principal.getName());
-        if(user.isPresent()){
+        if (user.isPresent()) {
             var userDetail = userDetailService.getUserDetailByUser(user.get());
-            if(userDetail.isEmpty()){
+            if (userDetail.isEmpty()) {
                 throw new NotFoundException("User detail not found!");
             }
 
             var userDetails = userDetail.get();
 
             var sender = searchAll(userDetails, multipartFile);
-            if(sender != null){
+            if (sender != null) {
                 Transaction transaction = new Transaction(
                         sender.getDefaultPhoneNumber(),
-                        userDetails.getUser().getDefaultPhoneNumber(),
+                        userDetails.getAppUser().getDefaultPhoneNumber(),
                         price,
-                        new Status((short) 4,StatusType.PENDING)
+                        new Status((short) 4, StatusType.PENDING)
                 );
 
                 transactionService.save(transaction);
-                
+
                 return true;
             }
 
             return false;
 
-        }
-        else {
+        } else {
             throw new NotFoundException("User not found!");
         }
     }
 
-    private AppUser contains(List<UserDetail> userDetailList, FingerprintTemplate probe){
+    private AppUser contains(List<UserDetail> userDetailList, FingerprintTemplate fingerprintTemplate) {
 
         double threshold = 40;
         boolean matches = false;
 
 
-        for(var userDetail: userDetailList){
-            if(userDetail.getUser().getFingerprint() != null){
-                var fileBytes = fingerprintService.getFile(userDetail.getUser().getFingerprint());
+        for (var userDetail : userDetailList) {
+            if (userDetail.getFingerprint() != null) {
                 FingerprintTemplate candidate = new FingerprintTemplate(
-                        new FingerprintImage(
-                                fileBytes,
-                                new FingerprintImageOptions()
-                                        .dpi(500)));
+                       userDetail.getFingerprint().getByteData()
+                );
 
-                double score = new FingerprintMatcher(probe)
+                double score = new FingerprintMatcher(fingerprintTemplate)
                         .match(candidate);
                 matches = score >= threshold;
 
-                if (matches){
-                    return userDetail.getUser();
+                if (matches) {
+                    return userDetail.getAppUser();
                 }
             }
         }
@@ -167,57 +179,59 @@ public class FingerprintController {
     }
 
 
-    private AppUser searchAll(UserDetail userDetail, MultipartFile multipartFile){
+    private AppUser searchAll(UserDetail userDetail, MultipartFile multipartFile) {
 
         boolean isFound = false;
         AppUser appUser;
         var theList = userDetailService.findAllByTown(userDetail);
-        var file = fingerprintService.convertToFile(multipartFile);
-        try{
-            FingerprintTemplate probe = new FingerprintTemplate(
+        final File file = fingerprintService.convertToFile(multipartFile);
+        try {
+            FingerprintTemplate fingerprintTemplate = new FingerprintTemplate(
                     new FingerprintImage(
                             Files.readAllBytes(file.toPath()),
                             new FingerprintImageOptions()
                                     .dpi(500)));
 
-            appUser = contains(theList, probe);
+            appUser = contains(theList, fingerprintTemplate);
             isFound = appUser != null;
 
 
-            if(!isFound){
+            if (!isFound) {
                 theList = userDetailService.findAllByCity(userDetail);
-                appUser = contains(theList, probe);
+                appUser = contains(theList, fingerprintTemplate);
                 isFound = appUser != null;
-                if (isFound)
+                if (isFound){
+                    file.delete();
                     return appUser;
+                }
+                else {
+                    theList = userDetailService.findAllByRegion(userDetail);
+                    appUser = contains(theList, fingerprintTemplate);
+                    isFound = appUser != null;
+
+                    if (isFound){
+                        file.delete();
+                        return appUser;
+                    }
+                }
+
             }
 
-            if(!isFound){
-                theList = userDetailService.findAllByRegion(userDetail);
-                appUser = contains(theList, probe);
-                isFound = appUser != null;
-
-                if (isFound)
-                    return appUser;
-            }
-
-            if(!isFound){
+            else{
                 theList = userDetailService.findAllExceptRegion(userDetail);
-                appUser = contains(theList, probe);
-                isFound = appUser != null;
-
-                if (isFound)
-                    return appUser;
+                appUser = contains(theList, fingerprintTemplate);
+                file.delete();
+                return appUser;
             }
-
         }catch (IOException exception){
+
             throw new RuntimeException("Error reading file!");
+        }finally {
+            file.delete();
         }
 
-
-        return appUser;
+        return null;
     }
-
 
 
 }

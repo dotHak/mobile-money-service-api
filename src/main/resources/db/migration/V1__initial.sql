@@ -85,10 +85,11 @@ CREATE TABLE fingerprints
 (
     fingerprint_id     BIGSERIAL   NOT NULL PRIMARY KEY,
     image_url          TEXT UNIQUE NOT NULL,
-    user_id            BIGINT      NOT NULL,
+    byte_data          BYTEA       NOT NULL,
+    user_details_id    BIGINT      NOT NULL,
     created_date       TIMESTAMP   NOT NULL,
     last_modified_date TIMESTAMP   NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES app_users (user_id)
+    FOREIGN KEY (user_details_id) REFERENCES user_details (detail_id)
 );
 
 CREATE TABLE statuses
@@ -150,14 +151,15 @@ CREATE TABLE merchants_phone_numbers
 );
 
 
-CREATE TABLE email_confirmation_tokens(
-    token_id BIGSERIAL NOT NULL PRIMARY KEY,
-    token TEXT NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
+CREATE TABLE email_confirmation_tokens
+(
+    token_id     BIGSERIAL NOT NULL PRIMARY KEY,
+    token        TEXT      NOT NULL,
+    created_at   TIMESTAMP NOT NULL,
+    expires_at   TIMESTAMP NOT NULL,
     confirmed_at TIMESTAMP NULL,
-    user_id BIGINT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES app_users(user_id)
+    user_id      BIGINT    NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES app_users (user_id)
 );
 
 

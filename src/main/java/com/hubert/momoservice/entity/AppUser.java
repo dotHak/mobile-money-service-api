@@ -51,14 +51,6 @@ public class AppUser extends Auditable implements UserDetails {
     )
     private List<PhoneNumber> phoneNumbers = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "fingerprints",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "fingerprint_id")
-    )
-    @JsonIgnore
-    private Fingerprint fingerprint;
 
     public AppUser() {
     }
@@ -186,12 +178,4 @@ public class AppUser extends Auditable implements UserDetails {
         });
     }
 
-
-    public Fingerprint getFingerprint() {
-        return fingerprint;
-    }
-
-    public void setFingerprint(Fingerprint fingerprint) {
-        this.fingerprint = fingerprint;
-    }
 }

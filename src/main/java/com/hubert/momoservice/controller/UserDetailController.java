@@ -49,7 +49,7 @@ public class UserDetailController {
             (@Valid @RequestBody UserDetail userDetail, Principal principal){
         var user = userService.findUserEmail(principal.getName());
 
-        user.ifPresent(userDetail::setUser);
+        user.ifPresent(userDetail::setAppUser);
 
         return userDetailService.save(userDetail);
     }

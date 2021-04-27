@@ -2,15 +2,19 @@ package com.hubert.momoservice.service;
 
 import com.hubert.momoservice.config.aws.FileStore;
 import com.hubert.momoservice.config.exception.NotFoundException;
-import com.hubert.momoservice.entity.AppUser;
 import com.hubert.momoservice.entity.Fingerprint;
 import com.hubert.momoservice.repository.FingerprintRepository;
+import com.machinezoo.sourceafis.FingerprintImage;
+import com.machinezoo.sourceafis.FingerprintImageOptions;
+import com.machinezoo.sourceafis.FingerprintTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,10 +48,6 @@ public class FingerprintService implements GenericService<Fingerprint, Long> {
         return repository.save(fingerprint);
     }
 
-    public Optional<Fingerprint> getFingerprintByUser(AppUser appUser){
-
-        return  repository.findFingerprintByAppUser(appUser);
-    }
 
     public Fingerprint update(Fingerprint fingerprint, Long id){
 
@@ -57,10 +57,11 @@ public class FingerprintService implements GenericService<Fingerprint, Long> {
         }).orElseThrow(() -> new NotFoundException("No fingerprint found for id: " + id));
     }
 
-    public Fingerprint updateUrl(String url, Long id){
+    public Fingerprint updateUrl(String url, Long id, MultipartFile multipartFile){
         return repository.findById(id).map(oldFingerprint -> {
             deleteFile(oldFingerprint.getImageUrl());
             oldFingerprint.setImageUrl(url);
+            oldFingerprint.setByteData(getByteData(multipartFile));
             return repository.save(oldFingerprint);
         }).orElseThrow(() -> new NotFoundException("No fingerprint found for id: " + id));
     }
@@ -80,5 +81,18 @@ public class FingerprintService implements GenericService<Fingerprint, Long> {
 
     public File convertToFile(MultipartFile multipartFile){
         return fileStore.convertMultiPartFileToFile(multipartFile);
+    }
+
+    public byte[] getByteData(MultipartFile multipartFile){
+        try{
+            FingerprintTemplate fingerprintTemplate = new FingerprintTemplate(
+                    new FingerprintImage(
+                            Files.readAllBytes(convertToFile(multipartFile).toPath()),
+                            new FingerprintImageOptions()
+                                    .dpi(500)));
+            return fingerprintTemplate.toByteArray();
+        }catch (IOException exception){
+            throw new RuntimeException("Error reading file!");
+        }
     }
 }

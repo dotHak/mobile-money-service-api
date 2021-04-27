@@ -3,15 +3,19 @@ package com.hubert.momoservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hubert.momoservice.config.auditing.Auditable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
+@Setter
+@Getter @NoArgsConstructor
 @Entity
 @Table(name = "fingerprints")
-public class Fingerprint extends Auditable implements Serializable {
+public class Fingerprint extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,49 +26,29 @@ public class Fingerprint extends Auditable implements Serializable {
     @NotNull
     private String imageUrl;
 
+    @JsonIgnore
+    @NotNull
+    private byte[] byteData;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(
-            name = "user_id",
+            name = "user_details_id",
             nullable = false,
-            referencedColumnName = "user_id"
+            referencedColumnName = "detail_id"
     )
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private AppUser appUser;
+    private UserDetail UserDetail;
 
-    public Fingerprint() {
-    }
-
-    public Fingerprint(String imageUrl) {
+    public Fingerprint(@NotEmpty @NotNull String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
-    public Fingerprint(String imageUrl, AppUser appUser) {
+    public Fingerprint(
+            @NotEmpty @NotNull String imageUrl,
+            @NotNull byte[] byteData,
+            UserDetail userDetail) {
         this.imageUrl = imageUrl;
-        this.appUser = appUser;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    @JsonIgnore
-    public AppUser getUser() {
-        return appUser;
-    }
-
-    public void setUser(AppUser appUser) {
-        this.appUser = appUser;
+        this.byteData = byteData;
+        UserDetail = userDetail;
     }
 }

@@ -1,36 +1,45 @@
 package com.hubert.momoservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hubert.momoservice.config.auditing.Auditable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
+@Setter @Getter
+@NoArgsConstructor
 @Entity()
 @Table(name = "user_details")
-public class UserDetail extends Auditable implements Serializable {
+public class UserDetail extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "detail_id")
     private long id;
 
-    @NotEmpty @NotNull
+    @NotEmpty
+    @NotNull
     private String firstName;
-    @NotEmpty @NotNull
+    @NotEmpty
+    @NotNull
     private String lastName;
 
     private String middleName;
-    @NotEmpty @NotNull
+    @NotEmpty
+    @NotNull
     private String houseNumber;
-    @NotEmpty @NotNull
+    @NotEmpty
+    @NotNull
     private String region;
-    @NotEmpty @NotNull
+    @NotEmpty
+    @NotNull
     private String city;
-    @NotEmpty @NotNull
+    @NotEmpty
+    @NotNull
     private String town;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -42,8 +51,14 @@ public class UserDetail extends Auditable implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private AppUser appUser;
 
-    public UserDetail() {
-    }
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "fingerprints",
+            joinColumns = @JoinColumn(name = "user_details_id"),
+            inverseJoinColumns = @JoinColumn(name = "fingerprint_id")
+    )
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Fingerprint fingerprint;
 
     public UserDetail(
             String firstName,
@@ -64,14 +79,15 @@ public class UserDetail extends Auditable implements Serializable {
     }
 
     public UserDetail(
-            String firstName,
-            String lastName,
+            @NotEmpty @NotNull String firstName,
+            @NotEmpty @NotNull String lastName,
             String middleName,
-            String houseNumber,
-            String region,
-            String city,
-            String town,
-            AppUser appUser
+            @NotEmpty @NotNull String houseNumber,
+            @NotEmpty @NotNull String region,
+            @NotEmpty @NotNull String city,
+            @NotEmpty @NotNull String town,
+            AppUser appUser,
+            Fingerprint fingerprint
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -81,78 +97,6 @@ public class UserDetail extends Auditable implements Serializable {
         this.city = city;
         this.town = town;
         this.appUser = appUser;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getHouseNumber() {
-        return houseNumber;
-    }
-
-    public void setHouseNumber(String houseNumber) {
-        this.houseNumber = houseNumber;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getTown() {
-        return town;
-    }
-
-    public void setTown(String town) {
-        this.town = town;
-    }
-
-    @JsonIgnore
-    public AppUser getUser() {
-        return appUser;
-    }
-
-    public void setUser(AppUser appUser) {
-        this.appUser = appUser;
+        this.fingerprint = fingerprint;
     }
 }
