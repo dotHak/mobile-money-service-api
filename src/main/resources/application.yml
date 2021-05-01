@@ -40,8 +40,8 @@ server:
 aws:
   s3:
     endpointUrl: https://s3.amazonaws.com
-    accessKeyId: AKIATN44DF4VTAH7X5GR
-    secretKey: iXSuU/tSNtqiJg5pqzfHk8Db2So5M93EEZMj1WTX
+#    accessKeyId: your access key Id
+#    secretKey: your secret key
     bucket:
       name: mobile-money-service-4989646462
     region: us-east-2
