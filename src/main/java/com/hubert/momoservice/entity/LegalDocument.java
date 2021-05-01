@@ -3,6 +3,9 @@ package com.hubert.momoservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hubert.momoservice.config.auditing.Auditable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -11,6 +14,9 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "legal_documents")
+@Getter
+@Setter
+@NoArgsConstructor
 public class LegalDocument extends Auditable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +36,6 @@ public class LegalDocument extends Auditable implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Merchant merchant;
 
-    public LegalDocument() {
-    }
 
     public LegalDocument(String documentUrl) {
         this.documentUrl = documentUrl;
@@ -42,28 +46,4 @@ public class LegalDocument extends Auditable implements Serializable {
         this.merchant = merchant;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getDocumentUrl() {
-        return documentUrl;
-    }
-
-    public void setDocumentUrl(String documentUrl) {
-        this.documentUrl = documentUrl;
-    }
-
-    @JsonIgnore
-    public Merchant getMerchant() {
-        return merchant;
-    }
-
-    public void setMerchant(Merchant merchant) {
-        this.merchant = merchant;
-    }
 }

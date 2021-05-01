@@ -1,9 +1,16 @@
 package com.hubert.momoservice.entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "statuses")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Status{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,31 +20,12 @@ public class Status{
     @Enumerated(EnumType.STRING)
     private StatusType name;
 
-    public Status() {
-    }
-
     public Status(StatusType name) {
         this.name = name;
     }
 
     public Status(short id, StatusType name) {
         this.id = id;
-        this.name = name;
-    }
-
-    public short getId() {
-        return id;
-    }
-
-    public void setId(short id) {
-        this.id = id;
-    }
-
-    public StatusType getName() {
-        return name;
-    }
-
-    public void setName(StatusType name) {
         this.name = name;
     }
 }

@@ -1,6 +1,9 @@
 package com.hubert.momoservice.entity;
 
 import com.hubert.momoservice.config.auditing.Auditable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -8,6 +11,9 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "transactions")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Transaction extends Auditable implements Serializable {
 
     @Id
@@ -44,53 +50,10 @@ public class Transaction extends Auditable implements Serializable {
     )
     private Status status;
 
-    public Transaction() {
-    }
-
     public Transaction(PhoneNumber sender, PhoneNumber receiver, double price, Status status) {
         this.sender = sender;
         this.receiver = receiver;
         this.price = price;
         this.status = status;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public PhoneNumber getSender() {
-        return sender;
-    }
-
-    public void setSender(PhoneNumber sender) {
-        this.sender = sender;
-    }
-
-    public PhoneNumber getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(PhoneNumber receiver) {
-        this.receiver = receiver;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 }

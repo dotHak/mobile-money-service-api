@@ -4,6 +4,9 @@ package com.hubert.momoservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hubert.momoservice.config.auditing.Auditable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -15,6 +18,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "merchants")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Merchant extends Auditable implements Serializable {
 
     @Id
@@ -49,9 +55,6 @@ public class Merchant extends Auditable implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private AppUser appUser;
 
-    public Merchant() {
-    }
-
     public Merchant(
             String name,
             String email,
@@ -65,72 +68,6 @@ public class Merchant extends Auditable implements Serializable {
         this.address = address;
         this.region = region;
         this.city = city;
-        this.appUser = appUser;
-    }
-
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public List<PhoneNumber> getPhoneNumbers() {
-        return phoneNumbers;
-    }
-
-    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
-        this.phoneNumbers = phoneNumbers;
-    }
-
-    @JsonIgnore
-    public AppUser getUser() {
-        return appUser;
-    }
-
-    public void setUser(AppUser appUser) {
         this.appUser = appUser;
     }
 
