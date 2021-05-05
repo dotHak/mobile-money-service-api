@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface PhoneNumberRepository extends JpaRepository<PhoneNumber, Long> {
 
-    Boolean existsPhoneNumberByNumber(String phoneNumber);
+  Boolean existsPhoneNumberByNumber(String phoneNumber);
 
-    Optional<PhoneNumber> findPhoneNumberByNumber(String phoneNumber);
+  Optional<PhoneNumber> findPhoneNumberByNumber(String phoneNumber);
 }

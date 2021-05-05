@@ -13,58 +13,58 @@ import java.util.Optional;
 @Service
 public class MerchantService implements GenericService<Merchant, Long> {
 
-    private final MerchantRepository repository;
+  private final MerchantRepository repository;
 
-    @Autowired
-    public MerchantService(MerchantRepository repository) {
-        this.repository = repository;
-    }
+  @Autowired
+  public MerchantService(MerchantRepository repository) {
+    this.repository = repository;
+  }
 
-    @Override
-    public List<Merchant> getAll() {
-        return repository.findAll();
-    }
+  @Override
+  public List<Merchant> getAll() {
+    return repository.findAll();
+  }
 
-    @Override
-    public Optional<Merchant> getOne(Long id) {
-        return repository.findById(id);
-    }
+  @Override
+  public Optional<Merchant> getOne(Long id) {
+    return repository.findById(id);
+  }
 
-    @Override
-    public Merchant save(Merchant merchant) {
-        return repository.saveAndFlush(merchant);
-    }
+  @Override
+  public Merchant save(Merchant merchant) {
+    return repository.saveAndFlush(merchant);
+  }
 
-    public List<Merchant> getMerChantsByUser(AppUser appUser){
-        return repository.findAllByAppUser(appUser);
-    }
+  public List<Merchant> getMerChantsByUser(AppUser appUser) {
+    return repository.findAllByAppUser(appUser);
+  }
 
-    public Merchant update(Merchant merchant, Long id){
-        return repository
-                .findById(id).map(oldMerchant -> {
-                    String name = merchant.getName() == null ?
-                            oldMerchant.getName() : merchant.getName();
-                    String email = merchant.getEmail() == null ?
-                            oldMerchant.getEmail() : merchant.getEmail();
-                    String address = merchant.getAddress() == null ?
-                            oldMerchant.getAddress() : merchant.getAddress();
-                    String region = merchant.getRegion() == null ?
-                            oldMerchant.getRegion() : merchant.getRegion();
-                    String city = merchant.getCity() == null ?
-                            oldMerchant.getCity() : merchant.getCity();
+  public Merchant update(Merchant merchant, Long id) {
+    return repository
+        .findById(id).map(oldMerchant -> {
+          String name = merchant.getName() == null ?
+              oldMerchant.getName() : merchant.getName();
+          String email = merchant.getEmail() == null ?
+              oldMerchant.getEmail() : merchant.getEmail();
+          String address = merchant.getAddress() == null ?
+              oldMerchant.getAddress() : merchant.getAddress();
+          String region = merchant.getRegion() == null ?
+              oldMerchant.getRegion() : merchant.getRegion();
+          String city = merchant.getCity() == null ?
+              oldMerchant.getCity() : merchant.getCity();
 
-                    oldMerchant.setName(name);
-                    oldMerchant.setEmail(email);
-                    oldMerchant.setAddress(address);
-                    oldMerchant.setRegion(region);
-                    oldMerchant.setCity(city);
+          oldMerchant.setName(name);
+          oldMerchant.setEmail(email);
+          oldMerchant.setAddress(address);
+          oldMerchant.setRegion(region);
+          oldMerchant.setCity(city);
 
-                    return repository.save(oldMerchant);
-                })
-                .orElseThrow(() -> new BadRequestException("No merchant found for id: " + id));
-    }
+          return repository.save(oldMerchant);
+        })
+        .orElseThrow(() -> new BadRequestException("No merchant found for id: " + id));
+  }
 
-    public Optional<Merchant> getByIdAndUser(Long id, AppUser appUser){
-        return repository.findMerchantByAppUserAndId(appUser, id);
-    }
+  public Optional<Merchant> getByIdAndUser(Long id, AppUser appUser) {
+    return repository.findMerchantByAppUserAndId(appUser, id);
+  }
 }

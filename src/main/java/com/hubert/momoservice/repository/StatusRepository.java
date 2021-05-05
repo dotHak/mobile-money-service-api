@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface StatusRepository extends CrudRepository<Status, Short> {
 
-    Optional<Status> findStatusByName(StatusType statusName);
+  Optional<Status> findStatusByName(StatusType statusName);
 }

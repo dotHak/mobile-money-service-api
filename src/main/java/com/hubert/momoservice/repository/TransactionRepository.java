@@ -10,9 +10,12 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    public List<Transaction> findAllByReceiverOrderByCreatedDateDesc(PhoneNumber phoneNumber);
-    public List<Transaction> findAllBySenderOrderByCreatedDateDesc(PhoneNumber phoneNumber);
-    public List<Transaction> findAllBySenderOrReceiverOrderByCreatedDateDesc
-            (@NotNull PhoneNumber sender, @NotNull PhoneNumber receiver);
+
+  public List<Transaction> findAllByReceiverOrderByCreatedDateDesc(PhoneNumber phoneNumber);
+
+  public List<Transaction> findAllBySenderOrderByCreatedDateDesc(PhoneNumber phoneNumber);
+
+  public List<Transaction> findAllBySenderOrReceiverOrderByCreatedDateDesc
+      (@NotNull PhoneNumber sender, @NotNull PhoneNumber receiver);
 
 }

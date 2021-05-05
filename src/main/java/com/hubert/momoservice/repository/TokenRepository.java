@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface TokenRepository extends JpaRepository<Token, Long> {
-    public List<Token> findAllByAppUser(AppUser appUser);
+
+  public List<Token> findAllByAppUser(AppUser appUser);
 
 }

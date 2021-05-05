@@ -14,21 +14,21 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class Role {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id", updatable = false)
-    private short id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "role_id", updatable = false)
+  private short id;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private RoleType name;
+  @Enumerated(EnumType.STRING)
+  @NotNull
+  private RoleType name;
 
-    public Role(RoleType name) {
-        this.name = name;
-    }
+  public Role(RoleType name) {
+    this.name = name;
+  }
 
-    public Role(short id, @NotNull RoleType name) {
-        this.id = id;
-        this.name = name;
-    }
+  public Role(short id, @NotNull RoleType name) {
+    this.id = id;
+    this.name = name;
+  }
 }

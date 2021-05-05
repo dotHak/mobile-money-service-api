@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface NetworkRepository extends CrudRepository<Network, Short> {
 
-    Optional<Network> findNetworkByName(NetworkType networkName);
+  Optional<Network> findNetworkByName(NetworkType networkName);
 }

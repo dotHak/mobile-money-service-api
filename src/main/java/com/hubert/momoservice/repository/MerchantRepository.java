@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface MerchantRepository extends JpaRepository<Merchant, Long> {
 
-    public List<Merchant> findAllByAppUser(AppUser appUser);
+  public List<Merchant> findAllByAppUser(AppUser appUser);
 
-    public Optional<Merchant> findMerchantByAppUserAndId(AppUser appUser, Long id);
+  public Optional<Merchant> findMerchantByAppUserAndId(AppUser appUser, Long id);
 
 }

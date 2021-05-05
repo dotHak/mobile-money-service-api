@@ -9,86 +9,86 @@ import java.time.LocalDateTime;
 @Table(name = "email_confirmation_tokens")
 public class EmailConfirmationToken {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "token_id")
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "token_id")
+  private Long id;
 
-    private String token;
+  private String token;
 
-    private LocalDateTime createdAt;
+  private LocalDateTime createdAt;
 
-    private LocalDateTime expiresAt;
+  private LocalDateTime expiresAt;
 
-    private LocalDateTime confirmedAt;
+  private LocalDateTime confirmedAt;
 
-    @ManyToOne
-    @JoinColumn(
-            nullable = false,
-            name = "user_id"
-    )
-    private AppUser appUser;
+  @ManyToOne
+  @JoinColumn(
+      nullable = false,
+      name = "user_id"
+  )
+  private AppUser appUser;
 
-    public EmailConfirmationToken(String token,
-                             LocalDateTime createdAt,
-                             LocalDateTime expiresAt,
-                             AppUser appUser) {
-        this.token = token;
-        this.createdAt = createdAt;
-        this.expiresAt = expiresAt;
-        this.appUser = appUser;
-    }
+  public EmailConfirmationToken(String token,
+      LocalDateTime createdAt,
+      LocalDateTime expiresAt,
+      AppUser appUser) {
+    this.token = token;
+    this.createdAt = createdAt;
+    this.expiresAt = expiresAt;
+    this.appUser = appUser;
+  }
 
-    public EmailConfirmationToken() {
-    }
+  public EmailConfirmationToken() {
+  }
 
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public String getToken() {
-        return token;
-    }
+  public String getToken() {
+    return token;
+  }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+  public void setToken(String token) {
+    this.token = token;
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    public LocalDateTime getExpiresAt() {
-        return expiresAt;
-    }
+  public LocalDateTime getExpiresAt() {
+    return expiresAt;
+  }
 
-    public void setExpiresAt(LocalDateTime expiresAt) {
-        this.expiresAt = expiresAt;
-    }
+  public void setExpiresAt(LocalDateTime expiresAt) {
+    this.expiresAt = expiresAt;
+  }
 
-    public LocalDateTime getConfirmedAt() {
-        return confirmedAt;
-    }
+  public LocalDateTime getConfirmedAt() {
+    return confirmedAt;
+  }
 
-    public void setConfirmedAt(LocalDateTime confirmedAt) {
-        this.confirmedAt = confirmedAt;
-    }
+  public void setConfirmedAt(LocalDateTime confirmedAt) {
+    this.confirmedAt = confirmedAt;
+  }
 
-    public AppUser getAppUser() {
-        return appUser;
-    }
+  public AppUser getAppUser() {
+    return appUser;
+  }
 
-    public void setAppUser(AppUser appUser) {
-        this.appUser = appUser;
-    }
+  public void setAppUser(AppUser appUser) {
+    this.appUser = appUser;
+  }
 }
 

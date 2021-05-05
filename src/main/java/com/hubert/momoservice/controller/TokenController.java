@@ -16,25 +16,25 @@ import java.util.List;
 @RequestMapping("/api/v1/tokens")
 public class TokenController {
 
-    private final TokenService tokenService;
-    private final AppUserService userService;
+  private final TokenService tokenService;
+  private final AppUserService userService;
 
-    @Autowired
-    public TokenController(TokenService tokenService, AppUserService userService) {
-        this.tokenService = tokenService;
-        this.userService = userService;
+  @Autowired
+  public TokenController(TokenService tokenService, AppUserService userService) {
+    this.tokenService = tokenService;
+    this.userService = userService;
+  }
+
+  @GetMapping
+  public List<Token> getToken(Principal principal) {
+    var user = userService.findUserEmail(principal.getName());
+
+    if (user.isPresent()) {
+      return tokenService
+          .getTokensByUser(user.get());
+    } else {
+      throw new NotFoundException("No user found");
     }
-
-    @GetMapping
-    public List<Token> getToken(Principal principal){
-        var user = userService.findUserEmail(principal.getName());
-
-        if(user.isPresent()){
-            return tokenService
-                    .getTokensByUser(user.get());
-        }else {
-            throw new NotFoundException("No user found");
-        }
-    }
+  }
 
 }

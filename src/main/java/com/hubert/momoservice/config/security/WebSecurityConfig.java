@@ -22,55 +22,55 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AppUserService appUserService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+  private final AppUserService appUserService;
+  private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    public WebSecurityConfig(AppUserService appUserService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.appUserService = appUserService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
+  @Autowired
+  public WebSecurityConfig(AppUserService appUserService,
+      BCryptPasswordEncoder bCryptPasswordEncoder) {
+    this.appUserService = appUserService;
+    this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .cors().and().csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/v*/users/signup/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated().and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http
+        .cors().and().csrf().disable()
+        .authorizeRequests()
+        .antMatchers("/api/v*/users/signup/**")
+        .permitAll()
+        .anyRequest()
+        .authenticated().and()
+        .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+        .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+  }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider());
-    }
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.authenticationProvider(daoAuthenticationProvider());
+  }
 
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(appUserService);
-        return provider;
-    }
+  @Bean
+  public DaoAuthenticationProvider daoAuthenticationProvider() {
+    DaoAuthenticationProvider provider =
+        new DaoAuthenticationProvider();
+    provider.setPasswordEncoder(bCryptPasswordEncoder);
+    provider.setUserDetailsService(appUserService);
+    return provider;
+  }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource()
-    {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        var corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-        corsConfiguration.addAllowedMethod(HttpMethod.PUT);
-        corsConfiguration.addAllowedMethod(HttpMethod.GET);
-        corsConfiguration.addAllowedMethod(HttpMethod.POST);
-        corsConfiguration.addAllowedMethod(HttpMethod.DELETE);
-        source.registerCorsConfiguration("/api/**",corsConfiguration);
-        return source;
-    }
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    var corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
+    corsConfiguration.addAllowedMethod(HttpMethod.PUT);
+    corsConfiguration.addAllowedMethod(HttpMethod.GET);
+    corsConfiguration.addAllowedMethod(HttpMethod.POST);
+    corsConfiguration.addAllowedMethod(HttpMethod.DELETE);
+    source.registerCorsConfiguration("/api/**", corsConfiguration);
+    return source;
+  }
 
 
 }

@@ -15,28 +15,28 @@ import java.util.Date;
 public abstract class Auditable {
 
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate
-    protected Date createdDate;
+  @Temporal(TemporalType.TIMESTAMP)
+  @CreatedDate
+  protected Date createdDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @LastModifiedDate
-    protected Date lastModifiedDate;
+  @Temporal(TemporalType.TIMESTAMP)
+  @LastModifiedDate
+  protected Date lastModifiedDate;
 
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
+  public Date getCreatedDate() {
+    return createdDate;
+  }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
+  public void setCreatedDate(Date createdDate) {
+    this.createdDate = createdDate;
+  }
 
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
+  public Date getLastModifiedDate() {
+    return lastModifiedDate;
+  }
 
-    public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
+  public void setLastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
+  }
 }

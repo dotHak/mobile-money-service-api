@@ -12,43 +12,44 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Setter
-@Getter @NoArgsConstructor
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "fingerprints")
 public class Fingerprint extends Auditable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "fingerprint_id")
-    private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "fingerprint_id")
+  private long id;
 
-    @NotEmpty
-    @NotNull
-    private String imageUrl;
+  @NotEmpty
+  @NotNull
+  private String imageUrl;
 
-    @JsonIgnore
-    @NotNull
-    private byte[] byteData;
+  @JsonIgnore
+  @NotNull
+  private byte[] byteData;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(
-            name = "user_details_id",
-            nullable = false,
-            referencedColumnName = "detail_id"
-    )
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private UserDetail UserDetail;
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(
+      name = "user_details_id",
+      nullable = false,
+      referencedColumnName = "detail_id"
+  )
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  private UserDetail UserDetail;
 
-    public Fingerprint(@NotEmpty @NotNull String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+  public Fingerprint(@NotEmpty @NotNull String imageUrl) {
+    this.imageUrl = imageUrl;
+  }
 
-    public Fingerprint(
-            @NotEmpty @NotNull String imageUrl,
-            @NotNull byte[] byteData,
-            UserDetail userDetail) {
-        this.imageUrl = imageUrl;
-        this.byteData = byteData;
-        UserDetail = userDetail;
-    }
+  public Fingerprint(
+      @NotEmpty @NotNull String imageUrl,
+      @NotNull byte[] byteData,
+      UserDetail userDetail) {
+    this.imageUrl = imageUrl;
+    this.byteData = byteData;
+    UserDetail = userDetail;
+  }
 }

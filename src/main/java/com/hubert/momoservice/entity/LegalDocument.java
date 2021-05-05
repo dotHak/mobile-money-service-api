@@ -18,32 +18,33 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 public class LegalDocument extends Auditable implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "document_id")
-    private long id;
 
-    @NotEmpty
-    @NotNull
-    private String documentUrl;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "document_id")
+  private long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(
-            name = "merchant_id",
-            referencedColumnName = "merchant_id",
-            nullable = false
-    )
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Merchant merchant;
+  @NotEmpty
+  @NotNull
+  private String documentUrl;
+
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(
+      name = "merchant_id",
+      referencedColumnName = "merchant_id",
+      nullable = false
+  )
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+  private Merchant merchant;
 
 
-    public LegalDocument(String documentUrl) {
-        this.documentUrl = documentUrl;
-    }
+  public LegalDocument(String documentUrl) {
+    this.documentUrl = documentUrl;
+  }
 
-    public LegalDocument(@NotEmpty @NotNull String documentUrl, Merchant merchant) {
-        this.documentUrl = documentUrl;
-        this.merchant = merchant;
-    }
+  public LegalDocument(@NotEmpty @NotNull String documentUrl, Merchant merchant) {
+    this.documentUrl = documentUrl;
+    this.merchant = merchant;
+  }
 
 }

@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface LegalDocumentRepository extends JpaRepository<LegalDocument, Long> {
-    public List<LegalDocument> findAllByMerchant(Merchant merchant);
+
+  public List<LegalDocument> findAllByMerchant(Merchant merchant);
 }

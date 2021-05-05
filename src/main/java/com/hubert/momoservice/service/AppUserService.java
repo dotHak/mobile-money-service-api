@@ -21,85 +21,88 @@ import java.util.UUID;
 @Service
 public class AppUserService implements UserDetailsService {
 
-    private final static String USER_NOT_FOUND_MSG =
-            "user with email %s not found";
+  private final static String USER_NOT_FOUND_MSG =
+      "user with email %s not found";
 
-    private final AppUserRepository appUserRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final EmailConfirmationTokenService emailConfirmationTokenService;
-    @Autowired
-    public AppUserService(AppUserRepository appUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder, EmailConfirmationTokenService emailConfirmationTokenService) {
-        this.appUserRepository = appUserRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.emailConfirmationTokenService = emailConfirmationTokenService;
-    }
+  private final AppUserRepository appUserRepository;
+  private final BCryptPasswordEncoder bCryptPasswordEncoder;
+  private final EmailConfirmationTokenService emailConfirmationTokenService;
 
-    @Override
-    public UserDetails loadUserByUsername(String email)
-            throws UsernameNotFoundException {
-        return appUserRepository.findUserByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException(
-                                String.format(USER_NOT_FOUND_MSG, email)));
-    }
+  @Autowired
+  public AppUserService(AppUserRepository appUserRepository,
+      BCryptPasswordEncoder bCryptPasswordEncoder,
+      EmailConfirmationTokenService emailConfirmationTokenService) {
+    this.appUserRepository = appUserRepository;
+    this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    this.emailConfirmationTokenService = emailConfirmationTokenService;
+  }
 
-    public String addNewUser(AppUser appUser) {
-        Optional<AppUser> user = appUserRepository.findUserByEmail(appUser.getEmail());
-        boolean userExists = user.isPresent();
-        if (userExists){
+  @Override
+  public UserDetails loadUserByUsername(String email)
+      throws UsernameNotFoundException {
+    return appUserRepository.findUserByEmail(email)
+        .orElseThrow(() ->
+            new UsernameNotFoundException(
+                String.format(USER_NOT_FOUND_MSG, email)));
+  }
 
-            if(user.get().getEnabled()){
-                throw new BadRequestException(
-                        "Email " + appUser.getEmail() + " already exists"
-                );
-            }
+  public String addNewUser(AppUser appUser) {
+    Optional<AppUser> user = appUserRepository.findUserByEmail(appUser.getEmail());
+    boolean userExists = user.isPresent();
+    if (userExists) {
 
-            String token = UUID.randomUUID().toString();
-
-            EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(
-                    token,
-                    LocalDateTime.now(),
-                    LocalDateTime.now().plusMinutes(15),
-                    user.get()
-            );
-
-            emailConfirmationTokenService.saveConfirmationToken(emailConfirmationToken);
-
-            return token;
-
-        }
-
-        String encodedPassword = bCryptPasswordEncoder
-                .encode(appUser.getPassword());
-
-        appUser.setPassword(encodedPassword);
-        appUser.getRoles().add(new Role((short) (RoleType.USER.ordinal() + 1), RoleType.USER));
-
-        appUser = appUserRepository.save(appUser);
-
-        String token = UUID.randomUUID().toString();
-
-        EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(
-                token,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15),
-                appUser
+      if (user.get().getEnabled()) {
+        throw new BadRequestException(
+            "Email " + appUser.getEmail() + " already exists"
         );
+      }
 
-        emailConfirmationTokenService.saveConfirmationToken(emailConfirmationToken);
+      String token = UUID.randomUUID().toString();
 
-        return token;
+      EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(
+          token,
+          LocalDateTime.now(),
+          LocalDateTime.now().plusMinutes(15),
+          user.get()
+      );
+
+      emailConfirmationTokenService.saveConfirmationToken(emailConfirmationToken);
+
+      return token;
+
     }
 
-    public int enableAppUser(String email) {
-        return appUserRepository.enableAppUser(email);
-    }
+    String encodedPassword = bCryptPasswordEncoder
+        .encode(appUser.getPassword());
 
-    public Optional<AppUser> findUserEmail(String email){
-        return appUserRepository.findUserByEmail(email);
-    }
+    appUser.setPassword(encodedPassword);
+    appUser.getRoles().add(new Role((short) (RoleType.USER.ordinal() + 1), RoleType.USER));
 
-    public AppUser save(AppUser appUser){
-        return appUserRepository.save(appUser);
-    }
+    appUser = appUserRepository.save(appUser);
+
+    String token = UUID.randomUUID().toString();
+
+    EmailConfirmationToken emailConfirmationToken = new EmailConfirmationToken(
+        token,
+        LocalDateTime.now(),
+        LocalDateTime.now().plusMinutes(15),
+        appUser
+    );
+
+    emailConfirmationTokenService.saveConfirmationToken(emailConfirmationToken);
+
+    return token;
+  }
+
+  public int enableAppUser(String email) {
+    return appUserRepository.enableAppUser(email);
+  }
+
+  public Optional<AppUser> findUserEmail(String email) {
+    return appUserRepository.findUserByEmail(email);
+  }
+
+  public AppUser save(AppUser appUser) {
+    return appUserRepository.save(appUser);
+  }
 }

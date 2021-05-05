@@ -15,31 +15,28 @@ import java.util.Map;
 @RequestMapping(path = "api/v1/users")
 public class UserController {
 
-    private final RegistrationService registrationService;
+  private final RegistrationService registrationService;
 
-    @Autowired
-    public UserController(RegistrationService registrationService) {
-        this.registrationService = registrationService;
-    }
+  @Autowired
+  public UserController(RegistrationService registrationService) {
+    this.registrationService = registrationService;
+  }
 
-    @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>>
-    register(@Valid @RequestBody AppUser appUser){
-        HashMap<String, String> map = new HashMap<>();
-        map.put("token", registrationService.register(appUser));
+  @PostMapping("/signup")
+  public ResponseEntity<Map<String, String>>
+  register(@Valid @RequestBody AppUser appUser) {
+    HashMap<String, String> map = new HashMap<>();
+    map.put("token", registrationService.register(appUser));
 
-        return new ResponseEntity<>(map, HttpStatus.OK);
-    }
+    return new ResponseEntity<>(map, HttpStatus.OK);
+  }
 
-    @GetMapping(path = "/signup/confirm")
-    public ResponseEntity<Map<String, String>>
-    confirm(@RequestParam("token") String token) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("response", registrationService.confirmToken(token));
+  @GetMapping(path = "/signup/confirm")
+  public ResponseEntity<String>
+  confirm(@RequestParam("token") String token) {
 
-        return new ResponseEntity<>(map, HttpStatus.OK);
-    }
-
+    return new ResponseEntity<>(registrationService.confirmToken(token), HttpStatus.OK);
+  }
 
 
 }

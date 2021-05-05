@@ -14,10 +14,12 @@ spring:
     locations: classpath:db/migration
 
   mail:
-    host: 0.0.0.0
-    port: 1025
-    username: hello
-    password: hello
+#    host: {Your smtp endpoint}
+#    port: {Your smtp port}
+#    username: {Your amazon SES username}
+#    password: {Your amazon SES smtp password}
+
+
 
     properties:
       mail:
@@ -37,6 +39,11 @@ server:
     include-message: always
     include-binding-errors: always
 
+# Value config
+mail:
+  sent:
+#   from: {haqcall@gmail.com}
+    subject: Confrim your email address
 aws:
   s3:
     endpointUrl: https://s3.amazonaws.com

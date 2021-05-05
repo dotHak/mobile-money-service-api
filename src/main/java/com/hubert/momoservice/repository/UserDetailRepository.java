@@ -10,13 +10,14 @@ import java.util.Optional;
 
 @Repository
 public interface UserDetailRepository extends JpaRepository<UserDetail, Long> {
-   Optional<UserDetail> findUserDetailByAppUser(AppUser appUser);
 
-   List<UserDetail> findAllByTownAndRegion(String town, String region);
+  Optional<UserDetail> findUserDetailByAppUser(AppUser appUser);
 
-   List<UserDetail> findAllByCityAndRegionAndTownIsNot(String city, String region, String town);
+  List<UserDetail> findAllByTownAndRegion(String town, String region);
 
-   List<UserDetail> findAllByRegionAndTownIsNotAndCityIsNot(String region, String town, String city);
+  List<UserDetail> findAllByCityAndRegionAndTownIsNot(String city, String region, String town);
 
-   List<UserDetail> findAllByRegionIsNot(String region);
+  List<UserDetail> findAllByRegionAndTownIsNotAndCityIsNot(String region, String town, String city);
+
+  List<UserDetail> findAllByRegionIsNot(String region);
 }

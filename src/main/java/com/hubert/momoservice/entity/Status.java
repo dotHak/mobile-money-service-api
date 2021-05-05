@@ -11,21 +11,22 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Status{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "status_id")
-    private short id;
+public class Status {
 
-    @Enumerated(EnumType.STRING)
-    private StatusType name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "status_id")
+  private short id;
 
-    public Status(StatusType name) {
-        this.name = name;
-    }
+  @Enumerated(EnumType.STRING)
+  private StatusType name;
 
-    public Status(short id, StatusType name) {
-        this.id = id;
-        this.name = name;
-    }
+  public Status(StatusType name) {
+    this.name = name;
+  }
+
+  public Status(short id, StatusType name) {
+    this.id = id;
+    this.name = name;
+  }
 }

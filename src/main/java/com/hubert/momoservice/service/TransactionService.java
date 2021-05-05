@@ -12,39 +12,39 @@ import java.util.Optional;
 @Service
 public class TransactionService implements GenericService<Transaction, Long> {
 
-    private final TransactionRepository repository;
+  private final TransactionRepository repository;
 
-    @Autowired
-    public TransactionService(TransactionRepository repository) {
-        this.repository = repository;
-    }
+  @Autowired
+  public TransactionService(TransactionRepository repository) {
+    this.repository = repository;
+  }
 
-    @Override
-    public List<Transaction> getAll() {
-        return repository.findAll();
-    }
+  @Override
+  public List<Transaction> getAll() {
+    return repository.findAll();
+  }
 
-    @Override
-    public Optional<Transaction> getOne(Long id) {
-        return repository.findById(id);
-    }
+  @Override
+  public Optional<Transaction> getOne(Long id) {
+    return repository.findById(id);
+  }
 
-    @Override
-    public Transaction save(Transaction transaction) {
-        return repository.save(transaction);
-    }
+  @Override
+  public Transaction save(Transaction transaction) {
+    return repository.save(transaction);
+  }
 
-    public List<Transaction> getReceived(PhoneNumber phoneNumber){
+  public List<Transaction> getReceived(PhoneNumber phoneNumber) {
 
-        return repository.findAllByReceiverOrderByCreatedDateDesc(phoneNumber);
-    }
+    return repository.findAllByReceiverOrderByCreatedDateDesc(phoneNumber);
+  }
 
-    public List<Transaction> getSent(PhoneNumber phoneNumber){
+  public List<Transaction> getSent(PhoneNumber phoneNumber) {
 
-        return repository.findAllBySenderOrderByCreatedDateDesc(phoneNumber);
-    }
+    return repository.findAllBySenderOrderByCreatedDateDesc(phoneNumber);
+  }
 
-    public List<Transaction> getAll(PhoneNumber sender, PhoneNumber receiver){
-        return repository.findAllBySenderOrReceiverOrderByCreatedDateDesc(sender, receiver);
-    }
+  public List<Transaction> getAll(PhoneNumber sender, PhoneNumber receiver) {
+    return repository.findAllBySenderOrReceiverOrderByCreatedDateDesc(sender, receiver);
+  }
 }

@@ -19,68 +19,70 @@ import java.util.Objects;
 
 @Service
 public class FileStore {
-    private final AmazonS3 amazonS3;
 
-    @Value("${aws.s3.bucket.name}")
-    private String bucketName;
+  private final AmazonS3 amazonS3;
 
-    @Value("${aws.s3.endpointUrl}")
-    private String endpointUrl;
+  @Value("${aws.s3.bucket.name}")
+  private String bucketName;
 
-    public FileStore(AmazonS3 amazonS3) {
-        this.amazonS3 = amazonS3;
+  @Value("${aws.s3.endpointUrl}")
+  private String endpointUrl;
+
+  public FileStore(AmazonS3 amazonS3) {
+    this.amazonS3 = amazonS3;
+  }
+
+  public String uploadFile(final MultipartFile multipartFile, String folderName) {
+    String fileUrl = "";
+    try {
+      final File file = convertMultiPartFileToFile(multipartFile);
+      final String fileName = generateFileName(file);
+      fileUrl = endpointUrl + "/" + bucketName + "/" + folderName + "/" + fileName;
+      uploadFileToS3Bucket(file, fileName, folderName);
+      file.delete();
+    } catch (final AmazonServiceException ex) {
+      throw new BadRequestException("File failed to upload to Amazon S3. ");
     }
 
-    public String uploadFile(final MultipartFile multipartFile, String folderName) {
-        String fileUrl = "";
-        try {
-            final File file = convertMultiPartFileToFile(multipartFile);
-            final String fileName = generateFileName(file);
-            fileUrl = endpointUrl + "/" + bucketName + "/" + folderName + "/" + fileName;
-            uploadFileToS3Bucket(file, fileName, folderName);
-            file.delete();
-        } catch (final AmazonServiceException ex) {
-            throw new BadRequestException("File failed to upload to Amazon S3. ");
-        }
+    return fileUrl;
+  }
 
-        return fileUrl;
+  public File convertMultiPartFileToFile(final MultipartFile multipartFile) {
+    final File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+    try (final FileOutputStream outputStream = new FileOutputStream(file)) {
+      outputStream.write(multipartFile.getBytes());
+    } catch (final IOException ex) {
+      throw new RuntimeException("Error in converting from multipartFile to File. ");
     }
+    return file;
+  }
 
-    public File convertMultiPartFileToFile(final MultipartFile multipartFile) {
-        final File file = new File(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-        try (final FileOutputStream outputStream = new FileOutputStream(file)) {
-            outputStream.write(multipartFile.getBytes());
-        } catch (final IOException ex) {
-            throw new RuntimeException("Error in converting from multipartFile to File. ");
-        }
-        return file;
-    }
-
-    public void deleteFile(String fileUrl, String folderName) {
-        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/"));
-        amazonS3.deleteObject(bucketName, folderName+fileName);
-    }
+  public void deleteFile(String fileUrl, String folderName) {
+    String fileName = fileUrl.substring(fileUrl.lastIndexOf("/"));
+    amazonS3.deleteObject(bucketName, folderName + fileName);
+  }
 
 
-    private void uploadFileToS3Bucket(final File file, String fileName, String folderName) {
-        final PutObjectRequest putObjectRequest =
-                new PutObjectRequest(bucketName, folderName+"/"+fileName, file);
-        amazonS3.putObject(putObjectRequest);
-    }
+  private void uploadFileToS3Bucket(final File file, String fileName, String folderName) {
+    final PutObjectRequest putObjectRequest =
+        new PutObjectRequest(bucketName, folderName + "/" + fileName, file);
+    amazonS3.putObject(putObjectRequest);
+  }
 
-    public byte[] download(String fileUrl, String folderName) {
-        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/")+1);
-        String path = String.format("%s/%s", bucketName, folderName);
-        try {
-            S3Object object = amazonS3.getObject(path, fileName);
-            S3ObjectInputStream objectContent = object.getObjectContent();
-            return IOUtils.toByteArray(objectContent);
-        } catch (AmazonServiceException | IOException e) {
-            throw new IllegalStateException("Failed to download the file", e);
-        }
+  public byte[] download(String fileUrl, String folderName) {
+    String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+    String path = String.format("%s/%s", bucketName, folderName);
+    try {
+      S3Object object = amazonS3.getObject(path, fileName);
+      S3ObjectInputStream objectContent = object.getObjectContent();
+      return IOUtils.toByteArray(objectContent);
+    } catch (AmazonServiceException | IOException e) {
+      throw new IllegalStateException("Failed to download the file", e);
     }
-    private String generateFileName(File file){
-        return LocalDateTime.now() + "_" +
-                file.getName().replace(" ", "_");
-    }
+  }
+
+  private String generateFileName(File file) {
+    return LocalDateTime.now() + "_" +
+        file.getName().replace(" ", "_");
+  }
 }

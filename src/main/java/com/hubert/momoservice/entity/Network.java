@@ -13,15 +13,16 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 public class Network implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "network_id")
-    private short id;
 
-    @Enumerated(EnumType.STRING)
-    private NetworkType name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "network_id")
+  private short id;
 
-    public Network(NetworkType name) {
-        this.name = name;
-    }
+  @Enumerated(EnumType.STRING)
+  private NetworkType name;
+
+  public Network(NetworkType name) {
+    this.name = name;
+  }
 }
