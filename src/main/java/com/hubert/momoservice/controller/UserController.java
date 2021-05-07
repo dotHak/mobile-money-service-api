@@ -1,7 +1,10 @@
 package com.hubert.momoservice.controller;
 
+import com.hubert.momoservice.config.exception.NotFoundException;
 import com.hubert.momoservice.entity.AppUser;
+import com.hubert.momoservice.service.AppUserService;
 import com.hubert.momoservice.service.RegistrationService;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +20,13 @@ public class UserController {
 
   private final RegistrationService registrationService;
 
+  private final AppUserService appUserService;
+
   @Autowired
-  public UserController(RegistrationService registrationService) {
+  public UserController(RegistrationService registrationService,
+      AppUserService appUserService) {
     this.registrationService = registrationService;
+    this.appUserService = appUserService;
   }
 
   @PostMapping("/signup")
@@ -38,5 +45,9 @@ public class UserController {
     return new ResponseEntity<>(registrationService.confirmToken(token), HttpStatus.OK);
   }
 
-
+  @GetMapping
+  public AppUser getUser(Principal principal) {
+    return appUserService.findUserEmail(principal.getName())
+        .orElseThrow(() -> new NotFoundException("Not user found for the current account."));
+  }
 }

@@ -112,7 +112,7 @@ public class TransactionController {
     var appUser = userOptional.get();
 
     Optional<PhoneNumber> sender;
-    PhoneNumber receiver = new PhoneNumber();
+    PhoneNumber receiver;
 
     if (transaction.sender() != null) {
       sender = phoneNumberService.getPhoneNumberByNumber(transaction.sender().getNumber());
@@ -121,18 +121,16 @@ public class TransactionController {
           .getPhoneNumberByNumber(appUser.getDefaultPhoneNumber().getNumber());
     }
 
-    if (transaction.sender() != null || transaction.email() != null) {
-      if (transaction.email() != null) {
-        Optional<AppUser> transferUser = userService.findUserEmail(transaction.email());
-        if (transferUser.isEmpty()) {
-          throw new NotFoundException("No user found for the email %s."
-              .formatted(transaction.email()));
-        }
-
-        receiver = transferUser.get().getDefaultPhoneNumber();
-      } else {
-        receiver = phoneNumberService.save(transaction.sender());
+    if (transaction.email() != null) {
+      Optional<AppUser> transferUser = userService.findUserEmail(transaction.email());
+      if (transferUser.isEmpty()) {
+        throw new NotFoundException("No user found for the email %s."
+            .formatted(transaction.email()));
       }
+
+      receiver = transferUser.get().getDefaultPhoneNumber();
+    } else {
+      receiver = phoneNumberService.save(transaction.receiver());
     }
 
     if (sender.isEmpty()) {
