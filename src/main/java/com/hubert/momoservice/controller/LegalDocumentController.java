@@ -5,6 +5,7 @@ import com.hubert.momoservice.config.exception.NotFoundException;
 import com.hubert.momoservice.entity.LegalDocument;
 import com.hubert.momoservice.service.LegalDocumentService;
 import com.hubert.momoservice.service.MerchantService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name="LegalDocument", description = "The legal document API for the CRUD operations")
 @RestController
 @RequestMapping("/api/v1/documents")
 public class LegalDocumentController {

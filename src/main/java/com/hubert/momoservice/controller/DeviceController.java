@@ -5,6 +5,7 @@ import com.hubert.momoservice.config.exception.NotFoundException;
 import com.hubert.momoservice.entity.Device;
 import com.hubert.momoservice.service.DeviceService;
 import com.hubert.momoservice.service.MerchantService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name="Device", description = "The device API for the CRUD operations")
 @RestController
 @RequestMapping("/api/v1/devices")
 public class DeviceController {

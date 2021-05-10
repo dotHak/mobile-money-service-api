@@ -11,8 +11,10 @@ import com.machinezoo.sourceafis.FingerprintImage;
 import com.machinezoo.sourceafis.FingerprintImageOptions;
 import com.machinezoo.sourceafis.FingerprintMatcher;
 import com.machinezoo.sourceafis.FingerprintTemplate;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +24,7 @@ import java.nio.file.Files;
 import java.security.Principal;
 import java.util.List;
 
+@Tag(name="Fingerprint", description = "The fingerprint API for the CRUD operations")
 @RestController
 @RequestMapping("/api/v1/fingerprints")
 public class FingerprintController {
@@ -64,9 +67,9 @@ public class FingerprintController {
     }
   }
 
-  @PostMapping
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public Fingerprint addNewFingerprint(
-      @RequestPart(value = "file") final MultipartFile multipartFile,
+      @RequestParam(value = "file") final MultipartFile multipartFile,
       Principal principal) {
     var user = userService.findUserEmail(principal.getName());
 

@@ -7,6 +7,7 @@ import com.hubert.momoservice.entity.PhoneNumber;
 import com.hubert.momoservice.service.AppUserService;
 import com.hubert.momoservice.service.MerchantService;
 import com.hubert.momoservice.service.PhoneNumberService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Tag(name="PhoneNumber", description = "The phone number API for the CRUD operations")
 @RestController
 @RequestMapping("/api/v1/phoneNumbers")
 public class PhoneNumberController {

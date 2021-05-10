@@ -52,7 +52,7 @@ public class UserDetail extends Auditable {
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private AppUser appUser;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne(fetch = FetchType.EAGER)
   @JoinTable(
       name = "fingerprints",
       joinColumns = @JoinColumn(name = "user_details_id"),

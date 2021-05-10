@@ -4,6 +4,7 @@ import com.hubert.momoservice.config.exception.NotFoundException;
 import com.hubert.momoservice.entity.AppUser;
 import com.hubert.momoservice.service.AppUserService;
 import com.hubert.momoservice.service.RegistrationService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+@Tag(name="User", description = "The user API for the CRUD operations")
 @RestController
 @RequestMapping(path = "api/v1/users")
 public class UserController {

@@ -4,12 +4,14 @@ import com.hubert.momoservice.config.exception.NotFoundException;
 import com.hubert.momoservice.entity.UserDetail;
 import com.hubert.momoservice.service.AppUserService;
 import com.hubert.momoservice.service.UserDetailService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
 
+@Tag(name="UserDetail", description = "The user details API for the CRUD operations")
 @RestController
 @RequestMapping("/api/v1/usersDetails")
 public class UserDetailController {

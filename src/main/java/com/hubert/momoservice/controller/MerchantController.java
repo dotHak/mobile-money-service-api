@@ -8,14 +8,19 @@ import com.hubert.momoservice.entity.Role;
 import com.hubert.momoservice.entity.RoleType;
 import com.hubert.momoservice.service.AppUserService;
 import com.hubert.momoservice.service.MerchantService;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
+@Tag(name="Merchant", description = "The merchants API for the CRUD operations")
 @RestController
 @RequestMapping("/api/v1/merchants")
 public class MerchantController {
@@ -54,13 +59,7 @@ public class MerchantController {
       (@Valid @RequestBody Merchant merchant, Principal principal) {
     var user = userService.findUserEmail(principal.getName());
 
-    if (user.isPresent()) {
-      merchant.setAppUser(user.get());
-      AppUser appUser = user.get();
-      appUser.getRoles().add(new Role((short) 2, RoleType.MERCHANT));
-      userService.save(appUser);
-    }
-    ;
+    user.ifPresent(merchant::setAppUser);
 
     try {
       return merchantService.save(merchant);
@@ -68,6 +67,35 @@ public class MerchantController {
       throw new BadRequestException(
           e.getCause().getMessage() + ", (name) = (" + merchant.getName() + ") already exists");
     }
+  }
+
+  @PostMapping("/addMerchantRole")
+  public ResponseEntity<String> addMerchantRole(Principal principal){
+    var user = userService.findUserEmail(principal.getName());
+  if(user.isEmpty()){
+    throw new NotFoundException("No user found for the current user token");
+  }
+    AppUser appUser = user.get();
+    appUser.getRoles().add(new Role((short) 2, RoleType.MERCHANT));
+    userService.save(appUser);
+
+    return new ResponseEntity<>("Success", HttpStatus.OK);
+  }
+
+  @DeleteMapping("/removeMerchantRole")
+  public ResponseEntity<String> removeMerchantRole(Principal principal){
+    var user = userService.findUserEmail(principal.getName());
+
+    if(user.isEmpty()){
+      throw new NotFoundException("No user found for the current user token");
+    }
+
+    AppUser appUser = user.get();
+
+    appUser.getRoles().removeIf(role -> role.getName() == RoleType.MERCHANT);
+    userService.save(appUser);
+
+    return new ResponseEntity<>("Success", HttpStatus.OK);
   }
 
   @PutMapping("/{id}")

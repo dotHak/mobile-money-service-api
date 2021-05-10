@@ -7,6 +7,7 @@ import com.hubert.momoservice.entity.*;
 import com.hubert.momoservice.service.AppUserService;
 import com.hubert.momoservice.service.PhoneNumberService;
 import com.hubert.momoservice.service.TransactionService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name="Transaction", description = "The transaction API for the CRUD operations")
 @RestController
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
