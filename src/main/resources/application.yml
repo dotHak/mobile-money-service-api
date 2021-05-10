@@ -1,8 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/momoservice?createDatabaseIfNotExist=true&useSSL=false
-    username: haq
-    password: 875690
+    url: postgres://cnthvtbsjqslry
+    :9568408182f7d70b7fb27416b04ca3b013bcec7fe93566c567e8dc352359bc17@ec2-54-90-211-192.compute-1
+    username:
+    password:
   jpa:
     hibernate:
       ddl-auto: validate
