@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name="Transaction", description = "The transaction API for the CRUD operations")
+@Tag(name = "Transaction", description = "The transaction API for the CRUD operations")
 @RestController
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
@@ -102,7 +102,7 @@ public class TransactionController {
   @PostMapping
   public Transaction addNewTransaction
       (@Valid @RequestBody TransactionDto transaction, Principal principal) {
-    if (transaction.email() == null && transaction.receiver() == null) {
+    if (transaction.getEmail() == null && transaction.getReceiver() == null) {
       throw new BadRequestException("Email or Sender phone number must be present");
     }
 
@@ -116,30 +116,30 @@ public class TransactionController {
     Optional<PhoneNumber> sender;
     PhoneNumber receiver;
 
-    if (transaction.sender() != null) {
-      sender = phoneNumberService.getPhoneNumberByNumber(transaction.sender().getNumber());
+    if (transaction.getSender() != null) {
+      sender = phoneNumberService.getPhoneNumberByNumber(transaction.getSender().getNumber());
     } else {
       sender = phoneNumberService
           .getPhoneNumberByNumber(appUser.getDefaultPhoneNumber().getNumber());
     }
 
-    if (transaction.email() != null) {
-      Optional<AppUser> transferUser = userService.findUserEmail(transaction.email());
+    if (transaction.getEmail() != null) {
+      Optional<AppUser> transferUser = userService.findUserEmail(transaction.getEmail());
       if (transferUser.isEmpty()) {
-        throw new NotFoundException("No user found for the email %s."
-            .formatted(transaction.email()));
+        throw new NotFoundException(String.format("No user found for the email %s.",
+            transaction.getEmail()));
       }
 
       receiver = transferUser.get().getDefaultPhoneNumber();
     } else {
-      receiver = phoneNumberService.save(transaction.receiver());
+      receiver = phoneNumberService.save(transaction.getReceiver());
     }
 
     if (sender.isEmpty()) {
       throw new NotFoundException("No phone number found for the current user");
     }
 
-    Transaction transactionSave = new Transaction(sender.get(), receiver, transaction.price(),
+    Transaction transactionSave = new Transaction(sender.get(), receiver, transaction.getPrice(),
         new Status((short) 4, StatusType.PENDING));
 
     return transactionService.save(transactionSave);

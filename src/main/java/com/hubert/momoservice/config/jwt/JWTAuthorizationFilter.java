@@ -2,6 +2,7 @@ package com.hubert.momoservice.config.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.hubert.momoservice.service.AppUserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,8 +19,12 @@ import static com.hubert.momoservice.config.jwt.SecurityConstants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-  public JWTAuthorizationFilter(AuthenticationManager authManager) {
+  private final AppUserService appUserService;
+
+  public JWTAuthorizationFilter(AuthenticationManager authManager,
+      AppUserService appUserService) {
     super(authManager);
+    this.appUserService = appUserService;
   }
 
   @Override
@@ -50,7 +55,9 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
           .getSubject();
 
       if (user != null) {
-        return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+        var appUser = appUserService.loadUserByUsername(user);
+        return new UsernamePasswordAuthenticationToken(appUser.getUsername(), null,
+            appUser.getAuthorities());
       }
 
       return null;

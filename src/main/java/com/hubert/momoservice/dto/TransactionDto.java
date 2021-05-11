@@ -4,8 +4,20 @@ import com.hubert.momoservice.entity.PhoneNumber;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public record TransactionDto(PhoneNumber receiver, PhoneNumber sender, @NotNull double price,
-                              @Email String email) {
+@Data
+@NoArgsConstructor
+public class TransactionDto {
+
+  private PhoneNumber receiver;
+  private PhoneNumber sender;
+  @NotNull
+  private double price;
+  @Email
+  private String email;
 
 }

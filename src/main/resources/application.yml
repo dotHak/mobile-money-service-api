@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url:  jdbc:postgresql://localhost:5432/momoservice?createDatabaseIfNotExist=true&useSSL=false
+    url: jdbc:postgresql://localhost:5432/momoservice?createDatabaseIfNotExist=true&useSSL=false
     username: haq
     password: 875690
 
@@ -15,13 +15,10 @@ spring:
     locations: classpath:db/migration
 
   mail:
-#    host: {Your smtp endpoint}
-#    port: {Your smtp port}
-#    username: {Your amazon SES username}
-#    password: {Your amazon SES smtp password}
-
-
-
+    #    host: {Your smtp endpoint}
+    #    port: {Your smtp port}
+    #    username: {Your amazon SES username}
+    #    password: {Your amazon SES smtp password}
     properties:
       mail:
         smtp:
@@ -33,29 +30,52 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+  boot:
+    admin:
+      client:
+        url: [http://localhost:8080]
+        username: hubert
+        password: 878756
+        instance:
+          name: momoserviceApi
+
 server:
   error:
     include-stacktrace: never
     include-message: always
     include-binding-errors: always
-
+  port: 9000
+  servlet:
+    application-display-name: momoserviceApi
 springdoc:
   swagger-ui:
-    path: /docs, /
+    path: /
   api-docs:
     path: /api-docs
 # Value config
 mail:
   sent:
-#   from: {haqcall@gmail.com}
+    #   from: {haqcall@gmail.com}
     subject: Confrim your email address
 
 
 aws:
   s3:
     endpointUrl: https://s3.amazonaws.com
-#    accessKeyId: your access key Id
-#    secretKey: your secret key
+    #    accessKeyId: your access key Id
+    #    secretKey: your secret key
     bucket:
       name: mobile-money-service-4989646462
     region: us-east-2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    health:
+      show-details: always
+
+

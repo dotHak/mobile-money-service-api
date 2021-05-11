@@ -41,18 +41,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/api-docs",
             "/swagger-ui.html",
             "/swagger-ui/**",
-            "/docs/**"
+            "/"
         )
         .permitAll()
         .anyRequest()
         .authenticated().and()
         .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-        .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+        .addFilter(new JWTAuthorizationFilter(authenticationManager(), appUserService))
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 
   @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+  protected void configure(AuthenticationManagerBuilder auth) {
     auth.authenticationProvider(daoAuthenticationProvider());
   }
 
